@@ -4,6 +4,7 @@ df = pd.read_csv("hotels.csv", dtype={"id": str})
 df_cards = pd.read_csv("cards.csv", dtype=str).to_dict(orient="records")
 df_cards_security = pd.read_csv("card_security.csv", dtype=str)
 
+
 class Hotel:
     def __init__(self, hotel_id):
         self.hotel_id = hotel_id
@@ -59,9 +60,21 @@ class SecureCreditCard(CreditCard):
             return False
 
 
+class SpaReservation(Hotel):
+
+    def generate(self, customer_name):
+        data = f"""
+        Thank you for SPA reservation!
+        Here are your SPA booking data:
+        Name: {customer_name}
+        Hotel Name: {self.name}
+"""
+        return data
+
+
 print(df)
 hotel_ID = input("Enter the id of the hotel: ")
-hotel = Hotel(hotel_ID)
+hotel = SpaReservation(hotel_ID)
 if hotel.available():
     credit_card = SecureCreditCard(number="1234")
     if credit_card.validate(expiration="12/26", cvc="123", holder="JOHN SMITH"):
@@ -70,6 +83,11 @@ if hotel.available():
             name = input("Enter your name: ")
             reservation_ticket = ReservationTicket(customer_name=name, hotel_object=hotel)
             print(reservation_ticket.generate())
+            spa_reservation = input("Do you want to book a spa package? ")
+            if spa_reservation == "yes":
+                print(hotel.generate(customer_name=name))
+            else:
+                print("Thank you")
         else:
             print("Authentication Failed! ")
     else:
